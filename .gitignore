@@ -1,4 +1,5 @@
 # Compiler files
+lib/
 cache/
 out/
 
@@ -12,3 +13,9 @@ docs/
 
 # Dotenv file
 .env
+
+# Ignore node_modules if you are using Node.js
+node_modules/
+
+# Ignore other files you don't want to track
+.DS_Store

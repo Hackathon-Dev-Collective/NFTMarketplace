@@ -2,10 +2,11 @@
 pragma solidity ^0.8.0;
 
                 
-import { ERC721 } from "openzeppelin-contracts/token/ERC721/ERC721.sol";
-import "openzeppelin-contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import { Counters } from "openzeppelin-contracts/utils/Counters.sol";
+import { ERC721 } from "openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
+import "openzeppelin-contracts/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import { Counters } from "openzeppelin-contracts/contracts/utils/Counters.sol";
 //import { Counters } from "@openzeppelin/contracts/utils/Counters.sol";
+
 
 
 /// @title NFT 市场智能合约
@@ -40,6 +41,8 @@ contract NFTMarketplace is ERC721URIStorage {
 
     constructor() ERC721("MyNFT", "MNFT") {}
 
+
+
     // 用户注册
     function register() external {
         require(!users[msg.sender].registered, "User already registered");
@@ -59,6 +62,10 @@ contract NFTMarketplace is ERC721URIStorage {
         userNFTs[msg.sender].push(newTokenId);
 
         emit NFTCreated(newTokenId, msg.sender, tokenURI, price);
+    }
+
+    function getNFT(uint256 tokenId) external view returns (NFT memory) {
+        return nfts[tokenId];
     }
 
     // 浏览市场
