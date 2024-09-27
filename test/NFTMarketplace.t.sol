@@ -13,29 +13,8 @@ contract NFTMarketplaceTest is Test {
         marketplace = new NFTMarketplace();
     }
 
-    function testUserRegistration() public {
-        // User 1 注册
-        vm.prank(user1);
-        marketplace.register();
-
-        // 验证用户注册状态
-        //NFTMarketplace.User memory user = marketplace.users(user1);
-        (address wallet, bool registered) = marketplace.users(user1);
-        assertEq(wallet, user1);
-        assertTrue(registered, "User should be registered");
-
-        // 再次注册应失败
-        vm.prank(user1);
-        vm.expectRevert("User already registered");
-        marketplace.register();
-
-    }
 
     function testCreateNFT() public {
-        // User 1 注册
-        vm.prank(user1);
-        marketplace.register();
-
         // User 1 创建 NFT
         vm.prank(user1);
         marketplace.createNFT("https://example.com/nft1", 1 ether);
@@ -49,15 +28,11 @@ contract NFTMarketplaceTest is Test {
     }
 
     function testGetNFTsForSale() public {
-        // User 1 注册并创建 NFT
-        vm.prank(user1);
-        marketplace.register();
+        // User 1 创建 NFT
         vm.prank(user1);
         marketplace.createNFT("https://example.com/nft1", 1 ether);
 
-        // User 2 注册并创建 NFT
-        vm.prank(user2);
-        marketplace.register();
+        // User 2 创建 NFT
         vm.prank(user2);
         marketplace.createNFT("https://example.com/nft2", 2 ether);
 
@@ -66,19 +41,15 @@ contract NFTMarketplaceTest is Test {
         assertEq(nftsForSale.length, 2, "There should be 2 NFTs for sale");
     }
 function testPurchaseNFT() public {
-        // User 1 注册并创建 NFT
-        vm.prank(user1);
-        marketplace.register();
+        // User1 创建 NFT
         vm.prank(user1);
         marketplace.createNFT("https://example.com/nft1", 1 ether);
+        // 确保 user1 有足够的以太币
+        //vm.deal(user1, 2 ether); // 给 user1 2 ether
 
-        // User 2 注册
+
+        // User2  确保 user2 有足够的以太币
         vm.prank(user2);
-        marketplace.register();
-
-
-
-        // 确保 user2 有足够的以太币
         vm.deal(user2, 2 ether); // 给 user2 2 ether
 
         // 检查 NFT 是否可出售
@@ -103,8 +74,6 @@ function testPurchaseNFT() public {
     }
 
     function testGetUserNFTs() public {
-        vm.prank(user1);
-        marketplace.register();
         vm.prank(user1);
         marketplace.createNFT("https://example.com/nft1", 1 ether);
         
