@@ -5,6 +5,10 @@ import "forge-std/Script.sol";
 import "../src/NFTMarketplace.sol"; // 确保路径正确
 
 contract DeployNFTMarketplace is Script {
+    // 可选函数，在每个函数运行之前被调用
+    function setUp() public {}
+
+    // 部署合约时会调用run()函数
     function run() external {
         // 开始广播交易
         vm.startBroadcast();

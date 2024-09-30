@@ -2,10 +2,13 @@
 src = "src"
 out = "out"
 libs = ["lib"]
+rpc_url = "https://linea-sepolia.infura.io/v3/${INFURA_PROJECT_ID}"
+private_key = "${PRIVATE_KEY}"
 
 [profile.dependencies]
 # 在这里列出您的依赖项
 # 例如，添加 OpenZeppelin Contracts
 openzeppelin = { git = "https://github.com/OpenZeppelin/openzeppelin-contracts.git", tag = "v4.8.0" }
+
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-optionsvvv

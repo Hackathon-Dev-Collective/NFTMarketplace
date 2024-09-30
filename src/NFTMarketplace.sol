@@ -7,6 +7,8 @@ import "openzeppelin-contracts/contracts/token/ERC721/extensions/ERC721URIStorag
 import { Counters } from "openzeppelin-contracts/contracts/utils/Counters.sol";
 //import { Counters } from "@openzeppelin/contracts/utils/Counters.sol";
 
+import "forge-std/console.sol"; // 导入 Foundry 的 console.sol
+
 
 
 /// @title NFT 市场智能合约
@@ -101,15 +103,29 @@ contract NFTMarketplace is ERC721URIStorage {
         require(msg.value >= nft.price, "Insufficient funds");
 
         address seller = nft.owner;
+
+        // 添加日志记录
+        console.log("Purchasing NFT:", tokenId);
+        console.log("Buyer:", msg.sender);
+        console.log("Seller:", seller);
+        console.log("Price:", nft.price);
+        console.log("Amount sent:", msg.value);
+
         nft.owner = msg.sender;
         nft.forSale = false;
-
+    
         // Transfer the NFT
         _transfer(seller, msg.sender, tokenId);
 
         // Transfer funds to the seller
-        payable(seller).transfer(msg.value);
+        //payable(seller).transfer(msg.value);  // foundry test 报错： ECRecover::fallback{value: 1000000000000000000}()  [PrecompileOOG] EvmError: PrecompileOOG
 
+        // 尝试转账给 seller
+        (bool success, ) = seller.call{value: msg.value}("");
+        if (!success) {
+            // 处理转账失败的情况
+            revert("Transfer failed");
+        }
         
         // 更新 userNFTs 映射
         userNFTs[msg.sender].push(tokenId); // 将 NFT ID 添加到购买者的列表中
@@ -118,7 +134,6 @@ contract NFTMarketplace is ERC721URIStorage {
         _removeNFTFromUser(seller, tokenId);
 
         emit NFTPurchased(tokenId, msg.sender, seller, nft.price);
-
     }
 
     // 辅助函数：从用户的 userNFTs 中移除指定的 tokenId
