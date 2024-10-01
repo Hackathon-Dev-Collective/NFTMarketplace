@@ -65,8 +65,15 @@ const { ethers } = require("ethers");
 // 假设您已经连接到以太坊网络并获取了合约实例
 const contractAddress = "YOUR_CONTRACT_ADDRESS";
 const abi = [ /* 合约 ABI */ ];
+
+// 适用于不依赖于用户浏览器的环境（例如，后端服务或不需要用户钱包的应用）。它允许您直接与区块链进行交互，发送交易、查询状态等。注意，由于没有用户的私钥，您无法直接发送需要签名的交易。
+//const provider = new ethers.providers.JsonRpcProvider("https://linea-sepolia.infura.io/v3/${INFURA_PROJECT_ID}");
+
+// 适用于需要用户交互的前端应用，特别是需要用户签名交易的场景。同时注意，依赖于用户安装钱包扩展，且用户需要主动连接钱包。
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
+
+// 创建合约实例
 const nftMarketplace = new ethers.Contract(contractAddress, abi, signer);
 
 // 1. 创建和铸造 NFT
@@ -76,16 +83,16 @@ async function createNFT(tokenURI, price) {
     console.log("NFT Created!");
 }
 
-// 2. 获取单个 NFT 信息
-async function getNFT(tokenId) {
-    const nft = await nftMarketplace.getNFT(tokenId);
-    console.log("NFT Info:", nft);
-}
-
-// 3. 浏览市场上的 NFT
+// 2. 浏览市场上的 NFT
 async function getNFTsForSale() {
     const nfts = await nftMarketplace.getNFTsForSale();
     console.log("NFTs for Sale:", nfts);
+}
+
+// 3. 获取单个 NFT 信息
+async function getNFT(tokenId) {
+    const nft = await nftMarketplace.getNFT(tokenId);
+    console.log("NFT Info:", nft);
 }
 
 // 4. 购买 NFT
@@ -111,8 +118,8 @@ async function getUserNFTs(userAddress) {
 // 示例调用
 (async () => {
     await createNFT("https://example.com/metadata/1", 0.1);
-    await getNFT(1);
     await getNFTsForSale();
+    await getNFT(1);
     await purchaseNFT(1, 0.1);
     await listNFTForSale(1, 0.15);
     await getUserNFTs("USER_ADDRESS");
