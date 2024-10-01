@@ -1,0 +1,116 @@
+# NFTMarketplace
+
+## 合约地址
+
+- 合约名称: `NFTMarketplace`
+- 地址: `0x0bd895B8d6e7f9bD1d2C7D54092cf9C3750C45AE`
+
+
+## 接口说明
+
+### 1. 创建和铸造 NFT
+- **函数**: `createNFT(string memory tokenURI, uint256 price) external`
+- **描述**: 用户可以通过此函数创建和铸造 NFT，设置其元数据和价格。
+- **参数**:
+  - `tokenURI`: NFT 的元数据 URI。
+  - `price`: NFT 的售价。
+- **事件**: `NFTCreated(uint256 indexed tokenId, address indexed owner, string tokenURI, uint256 price)`
+
+### 2. 获取单个 NFT 信息
+- **函数**: `getNFT(uint256 tokenId) external view returns (NFT memory)`
+- **描述**: 获取指定 tokenId 的 NFT 信息。
+- **参数**:
+  - `tokenId`: 要查询的 NFT 的 ID。
+- **返回值**: 返回一个 `NFT` 结构体，包含 NFT 的详细信息。
+
+### 3. 浏览市场上的 NFT
+- **函数**: `getNFTsForSale() external view returns (NFT[] memory)`
+- **描述**: 获取市场上所有待售的 NFT 列表。
+- **返回值**: 返回一个 `NFT` 数组，包含所有待售 NFT 的信息。
+
+### 4. 购买 NFT
+- **函数**: `purchaseNFT(uint256 tokenId) external payable`
+- **描述**: 用户可以通过此函数以固定价格购买 NFT。
+- **参数**:
+  - `tokenId`: 要购买的 NFT 的 ID。
+- **要求**:
+  - `msg.value` 必须大于或等于 NFT 的售价。
+- **事件**: `NFTPurchased(uint256 indexed tokenId, address indexed buyer, address indexed seller, uint256 price)`
+
+### 5. 重新上架 NFT 出售 （按需要使用）
+- **函数**: `listNFTForSale(uint256 tokenId, uint256 price) external`
+- **描述**: 将用户拥有的 NFT 重新上架出售。应用场景主要为用户在市场购买某个nft之后，如果希望再次出售，可以调用此接口重新上架出售。
+- **参数**:
+  - `tokenId`: 要上架的 NFT 的 ID。
+  - `price`: 新的售价。
+- **要求**: 只有 NFT 的拥有者可以调用此函数。
+
+### 6. 获取用户拥有的 NFT 列表
+- **函数**: `getUserNFTs(address user) external view returns (uint256[] memory)`
+- **描述**: 获取指定用户拥有的 NFT 的 ID 列表。
+- **参数**:
+  - `user`: 要查询的用户地址。
+- **返回值**: 返回一个包含用户拥有的 NFT ID 的数组。
+
+## 示例用法
+
+以下是与合约交互的示例代码，使用 ethers.js 库进行示范：
+
+```javascript
+const { ethers } = require("ethers");
+
+// 假设您已经连接到以太坊网络并获取了合约实例
+const contractAddress = "YOUR_CONTRACT_ADDRESS";
+const abi = [ /* 合约 ABI */ ];
+const provider = new ethers.providers.Web3Provider(window.ethereum);
+const signer = provider.getSigner();
+const nftMarketplace = new ethers.Contract(contractAddress, abi, signer);
+
+// 1. 创建和铸造 NFT
+async function createNFT(tokenURI, price) {
+    const tx = await nftMarketplace.createNFT(tokenURI, ethers.utils.parseEther(price.toString()));
+    await tx.wait();
+    console.log("NFT Created!");
+}
+
+// 2. 获取单个 NFT 信息
+async function getNFT(tokenId) {
+    const nft = await nftMarketplace.getNFT(tokenId);
+    console.log("NFT Info:", nft);
+}
+
+// 3. 浏览市场上的 NFT
+async function getNFTsForSale() {
+    const nfts = await nftMarketplace.getNFTsForSale();
+    console.log("NFTs for Sale:", nfts);
+}
+
+// 4. 购买 NFT
+async function purchaseNFT(tokenId, price) {
+    const tx = await nftMarketplace.purchaseNFT(tokenId, { value: ethers.utils.parseEther(price.toString()) });
+    await tx.wait();
+    console.log("NFT Purchased!");
+}
+
+// 5. 重新上架 NFT 出售
+async function listNFTForSale(tokenId, price) {
+    const tx = await nftMarketplace.listNFTForSale(tokenId, ethers.utils.parseEther(price.toString()));
+    await tx.wait();
+    console.log("NFT Listed for Sale!");
+}
+
+// 6. 获取用户拥有的 NFT 列表
+async function getUserNFTs(userAddress) {
+    const nftIds = await nftMarketplace.getUserNFTs(userAddress);
+    console.log("User's NFT IDs:", nftIds);
+}
+
+// 示例调用
+(async () => {
+    await createNFT("https://example.com/metadata/1", 0.1);
+    await getNFT(1);
+    await getNFTsForSale();
+    await purchaseNFT(1, 0.1);
+    await listNFTForSale(1, 0.15);
+    await getUserNFTs("USER_ADDRESS");
+})();

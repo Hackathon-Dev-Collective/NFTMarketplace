@@ -1,15 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-                
-import { ERC721 } from "openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
+import {ERC721} from "openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
 import "openzeppelin-contracts/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import { Counters } from "openzeppelin-contracts/contracts/utils/Counters.sol";
+import {Counters} from "openzeppelin-contracts/contracts/utils/Counters.sol";
 //import { Counters } from "@openzeppelin/contracts/utils/Counters.sol";
 
 import "forge-std/console.sol"; // 导入 Foundry 的 console.sol
-
-
 
 /// @title NFT 市场智能合约
 ///     用户注册(废弃)：用户可以通过 register 函数注册，确保每个用户只能注册一次。  -- 废弃
@@ -19,6 +16,7 @@ import "forge-std/console.sol"; // 导入 Foundry 的 console.sol
 ///     个人拥有NFT列表：用户可以通过 getUserNFTs 函数查看自己拥有的 NFT。
 contract NFTMarketplace is ERC721URIStorage {
     using Counters for Counters.Counter;
+
     Counters.Counter private _tokenIdCounter;
 
     struct NFT {
@@ -45,14 +43,12 @@ contract NFTMarketplace is ERC721URIStorage {
     event NFTPurchased(uint256 indexed tokenId, address indexed buyer, address indexed seller, uint256 price);
 
     constructor() ERC721("NFTMarket", "NFTM") {}
-    
 
     // 用户注册 -- 废弃
     //function register() external {
     //    require(!users[msg.sender].registered, "User already registered");
     //    users[msg.sender] = User(msg.sender, true);
     //}
-    
 
     // 创建和铸造 NFT
     function createNFT(string memory tokenURI, uint256 price) external {
@@ -62,7 +58,7 @@ contract NFTMarketplace is ERC721URIStorage {
         uint256 newTokenId = _tokenIdCounter.current();
 
         nfts[newTokenId] = NFT(newTokenId, msg.sender, tokenURI, price, true);
-        _mint(msg.sender, newTokenId);  // 因为本合约已确保实现onERC721Received接口， 所以直接用_mint,而没有采用_safeMint；
+        _mint(msg.sender, newTokenId); // 因为本合约已确保实现onERC721Received接口， 所以直接用_mint,而没有采用_safeMint；
         _setTokenURI(newTokenId, tokenURI);
         userNFTs[msg.sender].push(newTokenId);
 
@@ -81,7 +77,8 @@ contract NFTMarketplace is ERC721URIStorage {
         uint256 count = 0;
 
         for (uint256 i = 1; i <= totalNFTs; i++) {
-            if (nfts[i].forSale) {  // 避免显示正在交易的nft...
+            if (nfts[i].forSale) {
+                // 避免显示正在交易的nft...
                 nftsForSale[count] = nfts[i];
                 count++;
             }
@@ -113,7 +110,7 @@ contract NFTMarketplace is ERC721URIStorage {
 
         nft.owner = msg.sender;
         nft.forSale = false;
-    
+
         // Transfer the NFT
         _transfer(seller, msg.sender, tokenId);
 
@@ -121,12 +118,12 @@ contract NFTMarketplace is ERC721URIStorage {
         //payable(seller).transfer(msg.value);  // foundry test 报错： ECRecover::fallback{value: 1000000000000000000}()  [PrecompileOOG] EvmError: PrecompileOOG
 
         // 尝试转账给 seller
-        (bool success, ) = seller.call{value: msg.value}("");
+        (bool success,) = seller.call{value: msg.value}("");
         if (!success) {
             // 处理转账失败的情况
             revert("Transfer failed");
         }
-        
+
         // 更新 userNFTs 映射
         userNFTs[msg.sender].push(tokenId); // 将 NFT ID 添加到购买者的列表中
 
@@ -149,7 +146,7 @@ contract NFTMarketplace is ERC721URIStorage {
         }
     }
 
-    // 重新上架NFT出售  
+    // 重新上架NFT出售
     function listNFTForSale(uint256 tokenId, uint256 price) external {
         require(ownerOf(tokenId) == msg.sender, "Only the owner can list the NFT for sale");
         require(price > 0, "Price must be greater than zero");

@@ -13,7 +13,6 @@ contract NFTMarketplaceTest is Test {
         marketplace = new NFTMarketplace();
     }
 
-
     function testCreateNFT() public {
         // User 1 创建 NFT
         vm.prank(user1);
@@ -40,13 +39,13 @@ contract NFTMarketplaceTest is Test {
         NFTMarketplace.NFT[] memory nftsForSale = marketplace.getNFTsForSale();
         assertEq(nftsForSale.length, 2, "There should be 2 NFTs for sale");
     }
-function testPurchaseNFT() public {
+
+    function testPurchaseNFT() public {
         // User1 创建 NFT
         vm.prank(user1);
         marketplace.createNFT("https://example.com/nft1", 1 ether);
         // 确保 user1 有足够的以太币
         //vm.deal(user1, 2 ether); // 给 user1 2 ether
-
 
         // User2  确保 user2 有足够的以太币
         vm.prank(user2);
@@ -58,8 +57,7 @@ function testPurchaseNFT() public {
 
         // User 2 购买 NFT
         vm.prank(user2);
-        marketplace.purchaseNFT{value: 1 ether}(1);   // 这句会导致报错： EvmError: Revert； 原因未明；
-        
+        marketplace.purchaseNFT{value: 1 ether}(1); // 这句会导致报错： EvmError: Revert； 原因未明；
 
         // 验证 NFT 所有权转移
         nft = marketplace.getNFT(1);
@@ -70,16 +68,14 @@ function testPurchaseNFT() public {
         uint256[] memory userNFTs = marketplace.getUserNFTs(user2);
         assertEq(userNFTs.length, 1, "User 2 should own 1 NFT");
         assertEq(userNFTs[0], 1, "User 2's NFT ID should be 1");
-
     }
 
     function testGetUserNFTs() public {
         vm.prank(user1);
         marketplace.createNFT("https://example.com/nft1", 1 ether);
-        
+
         uint256[] memory userNfts = marketplace.getUserNFTs(user1);
         assertEq(userNfts.length, 1);
         assertEq(userNfts[0], 1);
     }
 }
-

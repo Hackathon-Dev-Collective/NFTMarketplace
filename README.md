@@ -15,6 +15,11 @@ https://book.getfoundry.sh/
 
 ## Usage
 
+### Install
+```shell
+$ forge install OpenZeppelin/openzeppelin-contracts@v4.8.0
+```
+
 ### Build
 
 ```shell
@@ -32,23 +37,32 @@ $ forge test
 ```shell
 $ forge fmt
 ```
+### Deploy
+
+```shell
+$ forge script script/DeployNFTMarketplace.s.sol --rpc-url "https://linea-sepolia.infura.io/v3/${INFURA_PROJECT_ID}" --private-key "${PRIVATE_KEY}" —broadcast
+```
+
+### Verify
+
+```shell
+$ forge verify-contract --rpc-url https://rpc.sepolia.linea.build --verifier blockscout   --verifier-url 'https://api-explorer.sepolia.linea.build/api/' --compiler-version 0.8.27  <ConstactID>  ./src/NFTMarketplace.sol:NFTMarketplace
+```
+
+
+## Other Usage
 
 ### Gas Snapshots
 
 ```shell
 $ forge snapshot
+$ forge snapshot revert <snapshot_id>
 ```
 
 ### Anvil
 
 ```shell
 $ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
 ```
 
 ### Cast
