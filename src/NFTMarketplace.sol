@@ -146,6 +146,11 @@ contract NFTMarketplace is ERC721URIStorage {
         }
     }
 
+    // 获取用户所拥有的 NFT 的 ID 列表
+    function getUserNFTs(address user) external view returns (uint256[] memory) {
+        return userNFTs[user];
+    }
+
     // 重新上架NFT出售
     function listNFTForSale(uint256 tokenId, uint256 price) external {
         require(ownerOf(tokenId) == msg.sender, "Only the owner can list the NFT for sale");
@@ -154,9 +159,5 @@ contract NFTMarketplace is ERC721URIStorage {
         nfts[tokenId].forSale = true;
         nfts[tokenId].price = price;
     }
-
-    // 获取用户所拥有的 NFT 的 ID 列表
-    function getUserNFTs(address user) external view returns (uint256[] memory) {
-        return userNFTs[user];
-    }
+        
 }

@@ -6,29 +6,38 @@ import "../src/NFTMarketplace.sol";
 
 contract NFTMarketplaceTest is Test {
     NFTMarketplace marketplace;
-    address user1 = address(0x1);
-    address user2 = address(0x2);
+    address user1;
+    address user2;
 
     function setUp() public {
+        // 部署合约
         marketplace = new NFTMarketplace();
+
+        // 创建两个测试用户
+        user1 = address(0x1);
+        user2 = address(0x2);        
     }
 
     function testCreateNFT() public {
         // User 1 创建 NFT
-        vm.prank(user1);
+        //vm.prank(user1);  
+        vm.startPrank(user1); // 模拟 user1 的操作
         marketplace.createNFT("https://example.com/nft1", 1 ether);
 
-        // 验证 NFT 创建
+        // 验证 NFT 是否创建成功
         NFTMarketplace.NFT memory nft = marketplace.getNFT(1); // 使用 getter 函数
+        assertEq(nft.id, 1, "NFT id should be 1");
         assertEq(nft.owner, user1, "NFT owner should be user1");
         assertEq(nft.tokenURI, "https://example.com/nft1", "NFT tokenURI should match");
         assertEq(nft.price, 1 ether, "NFT price should match");
-        assertTrue(nft.forSale, "NFT should be for sale");
+        assertTrue(nft.forSale, "NFT should be for sale");      
+
+        vm.stopPrank();        
     }
 
     function testGetNFTsForSale() public {
         // User 1 创建 NFT
-        vm.prank(user1);
+        vm.prank(user1);  // prank用于单次调用
         marketplace.createNFT("https://example.com/nft1", 1 ether);
 
         // User 2 创建 NFT
@@ -44,8 +53,7 @@ contract NFTMarketplaceTest is Test {
         // User1 创建 NFT
         vm.prank(user1);
         marketplace.createNFT("https://example.com/nft1", 1 ether);
-        // 确保 user1 有足够的以太币
-        //vm.deal(user1, 2 ether); // 给 user1 2 ether
+        
 
         // User2  确保 user2 有足够的以太币
         vm.prank(user2);
@@ -70,12 +78,46 @@ contract NFTMarketplaceTest is Test {
         assertEq(userNFTs[0], 1, "User 2's NFT ID should be 1");
     }
 
-    function testGetUserNFTs() public {
-        vm.prank(user1);
+    function testListNFTForSale() public {
+        vm.startPrank(user1);  // 模拟 user1 的操作， startPrank用于开始一个模拟的上下文，直到调用 vm.stopPrank()。
         marketplace.createNFT("https://example.com/nft1", 1 ether);
-
-        uint256[] memory userNfts = marketplace.getUserNFTs(user1);
-        assertEq(userNfts.length, 1);
-        assertEq(userNfts[0], 1);
+        marketplace.listNFTForSale(1, 2 ether);
+        
+        // 验证 NFT 的价格和出售状态
+        NFTMarketplace.NFT memory nft = marketplace.getNFT(1);
+        assertEq(nft.price, 2 ether);
+        assertTrue(nft.forSale);
+        
+        vm.stopPrank();
     }
+
+    function testGetUserNFTs() public {
+        vm.startPrank(user1);
+        marketplace.createNFT("https://example.com/nft1", 1 ether);
+        marketplace.createNFT("https://example.com/nft2", 2 ether);
+        vm.stopPrank();
+
+        uint256[] memory userNFTs = marketplace.getUserNFTs(user1);
+        assertEq(userNFTs.length, 2);
+        assertEq(userNFTs[0], 1);
+        assertEq(userNFTs[1], 2);
+    }
+
+
+    function testFailPurchaseNFTInsufficientFunds() public {
+        vm.startPrank(user1);
+        marketplace.createNFT("https://example.com/nft1", 1 ether);
+        vm.stopPrank();
+
+        // user2 尝试以不足的金额购买 NFT
+        vm.startPrank(user2);
+        vm.deal(user2, 0.5 ether); // 给 user2 发送 0.5 ether
+console.log("User2 balance before purchase:", user2.balance);
+        vm.expectRevert("Insufficient funds"); // 预期 revert
+NFTMarketplace.NFT memory nft = marketplace.getNFT(1);  // 假设有一个获取 NFT 信息的函数
+console.log("NFT price:", nft.price);        
+        marketplace.purchaseNFT{value: 0.5 ether}(1); // 尝试以 0.5 ether 购买 NFT
+        vm.stopPrank();
+    }    
 }
+

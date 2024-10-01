@@ -40,7 +40,7 @@ $ forge fmt
 ### Deploy
 
 ```shell
-$ forge script script/DeployNFTMarketplace.s.sol --rpc-url "https://linea-sepolia.infura.io/v3/${INFURA_PROJECT_ID}" --private-key "${PRIVATE_KEY}" —broadcast
+$ forge script script/DeployNFTMarketplace.s.sol --rpc-url "https://linea-sepolia.infura.io/v3/${INFURA_PROJECT_ID}" --private-key "${PRIVATE_KEY}" --broadcast 
 ```
 
 ### Verify
