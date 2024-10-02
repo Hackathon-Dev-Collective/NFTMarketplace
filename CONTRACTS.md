@@ -6,11 +6,12 @@
 - 地址: `0x0Ee0d12a58eE35270374f70dc5a61CDC35f0296d`
 
 ## 区块链浏览器
-- 合约url： https://explorer.sepolia.linea.build/address/0x0Ee0d12a58eE35270374f70dc5a61CDC35f0296d?tab=contract
-- 说明： 合约已开源，同时可查看abi
+- 合约url: https://explorer.sepolia.linea.build/address/0x0Ee0d12a58eE35270374f70dc5a61CDC35f0296d?tab=contract
+- 说明: 合约已开源，同时可查看abi
 
 ## 节点服务商
--- rpc-url： https://linea-sepolia.infura.io/v3/5e6d337523b147f197ccdc703cd60af0
+-- rpc-url: https://linea-sepolia.infura.io/v3/5e6d337523b147f197ccdc703cd60af0
+-- ChainId: 59141
 
 
 ## 接口说明
