@@ -51,7 +51,7 @@ contract NFTMarketplace is ERC721URIStorage {
     //}
 
     // 创建和铸造 NFT
-    function createNFT(string memory tokenURI, uint256 price) external {
+    function createNFT(string memory tokenURI, uint256 price) external returns (uint256) {
         //require(users[msg.sender].registered, "User not registered");
         //
         _tokenIdCounter.increment();
@@ -63,6 +63,7 @@ contract NFTMarketplace is ERC721URIStorage {
         userNFTs[msg.sender].push(newTokenId);
 
         emit NFTCreated(newTokenId, msg.sender, tokenURI, price);
+        return newTokenId; // 返回新创建的 tokenId
     }
 
     // nfts的getter函数接口

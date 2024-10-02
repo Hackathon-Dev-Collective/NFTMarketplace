@@ -3,10 +3,10 @@
 ## 合约地址
 
 - 合约名称: `NFTMarketplace`
-- 地址: `0x0Ee0d12a58eE35270374f70dc5a61CDC35f0296d`
+- 地址: `0x78A52474AFcA2E9eaB20389f2D4eaFAD7ACA342f`
 
 ## 区块链浏览器
-- 合约url: https://explorer.sepolia.linea.build/address/0x0Ee0d12a58eE35270374f70dc5a61CDC35f0296d?tab=contract
+- 合约url: https://explorer.sepolia.linea.build/address/0x78A52474AFcA2E9eaB20389f2D4eaFAD7ACA342f?tab=contract_code
 - 说明: 合约已开源，同时可查看abi
 
 ## 节点服务商
@@ -17,11 +17,12 @@
 ## 接口说明
 
 ### 1. 创建和铸造 NFT
-- **函数**: `createNFT(string memory tokenURI, uint256 price) external`
+- **函数**: `createNFT(string memory tokenURI, uint256 price) external returns (uint256) `
 - **描述**: 用户可以通过此函数创建和铸造 NFT，设置其元数据和价格。
 - **参数**:
   - `tokenURI`: NFT 的元数据 URI。
   - `price`: NFT 的售价。
+- **返回值**: 返回一个新创建的 `NFT` 的tokenid。  
 - **事件**: `NFTCreated(uint256 indexed tokenId, address indexed owner, string tokenURI, uint256 price)`
 
 ### 2. 获取单个 NFT 信息
