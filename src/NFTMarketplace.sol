@@ -59,7 +59,7 @@ contract NFTMarketplace is ERC721URIStorage {
 
         nfts[newTokenId] = NFT(newTokenId, msg.sender, tokenURI, price, true);
         _mint(msg.sender, newTokenId); // 因为本合约已确保实现onERC721Received接口， 所以直接用_mint,而没有采用_safeMint；
-        _setTokenURI(newTokenId, tokenURI);
+        _setTokenURI(newTokenId, tokenURI);      
         userNFTs[msg.sender].push(newTokenId);
 
         emit NFTCreated(newTokenId, msg.sender, tokenURI, price);
@@ -101,6 +101,8 @@ contract NFTMarketplace is ERC721URIStorage {
         require(msg.value >= nft.price, "Insufficient funds");
 
         address seller = nft.owner;
+        // 添加检查，确保买家不能购买自己的 NFT
+        require(msg.sender != seller, "Cannot purchase your own NFT");
 
         // 添加日志记录
         console.log("Purchasing NFT:", tokenId);
