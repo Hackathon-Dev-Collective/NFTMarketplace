@@ -1,12 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {ERC721} from "openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
-import "openzeppelin-contracts/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import {Counters} from "openzeppelin-contracts/contracts/utils/Counters.sol";
-//import { Counters } from "@openzeppelin/contracts/utils/Counters.sol";
+
+import {ERC721} from "openzeppelin-contracts-upgradeable/contracts/token/ERC721/ERC721Upgradeable.sol";
+import {ERC721URIStorage} from "openzeppelin-contracts-upgradeable/contracts/token/ERC721/extensions/ERC721URIStorageUpgradeable.sol";
+import {Counters} from "openzeppelin-contracts-upgradeable/contracts/utils/CountersUpgradeable.sol";
+import {UUPSUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/proxy/utils/UUPSUpgradeable.sol";
+import {Initializable} from "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 
 import "forge-std/console.sol"; // 导入 Foundry 的 console.sol
+
 
 /// @title NFT 市场智能合约
 ///     用户注册(废弃)：用户可以通过 register 函数注册，确保每个用户只能注册一次。  -- 废弃
@@ -14,7 +17,7 @@ import "forge-std/console.sol"; // 导入 Foundry 的 console.sol
 ///     市场浏览：用户可以通过 getNFTsForSale 函数查看市场上所有待售的 NFT。
 ///     固定价格购买 NFT：用户可以通过 purchaseNFT 函数以固定价格购买 NFT，合约会处理所有权转移和资金转账。
 ///     个人拥有NFT列表：用户可以通过 getUserNFTs 函数查看自己拥有的 NFT。
-contract NFTMarketplace is ERC721URIStorage {
+contract NFTMarketplace is Initializable, ERC721URIStorage, UUPSUpgradeable {
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIdCounter;
@@ -42,7 +45,16 @@ contract NFTMarketplace is ERC721URIStorage {
     event NFTCreated(uint256 indexed tokenId, address indexed owner, string tokenURI, uint256 price);
     event NFTPurchased(uint256 indexed tokenId, address indexed buyer, address indexed seller, uint256 price);
 
-    constructor() ERC721("NFTMarket", "NFTM") {}
+    // 可升级合约，去掉构造函数
+    //constructor() ERC721("NFTMarket", "NFTM") {}
+
+    // 初始化函数
+    function initialize() public initializer {
+        __ERC721_init("NFTMarket", "NFTM");
+    }    
+
+    // 仅允许合约所有者进行升级
+    function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}    
 
     // 用户注册 -- 废弃
     //function register() external {
