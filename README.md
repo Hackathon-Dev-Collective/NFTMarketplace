@@ -15,6 +15,11 @@ https://book.getfoundry.sh/
 
 ## Usage
 
+### env 
+```shell
+$ source /Users/kylemao/.bashrc 
+```
+
 ### Install
 ```shell
 $ forge install OpenZeppelin/openzeppelin-contracts@v4.8.0
