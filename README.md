@@ -23,6 +23,7 @@ $ source /Users/kylemao/.bashrc
 ### Install
 ```shell
 $ forge install OpenZeppelin/openzeppelin-contracts@v4.8.0
+$ forge install OpenZeppelin/openzeppelin-contracts-upgradeable@v4.8.0
 ```
 
 ### Build
